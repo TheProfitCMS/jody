@@ -1,3 +1,4 @@
+```ruby
 json.set! :html_content, {
   append: {
     "@test_append_1" => "Test append/1",
@@ -32,3 +33,4 @@ json.set! :js_exec, [
 json.page_reload  true
 json.redirect_to  '/path'
 json.replace_with '/path'
+```
