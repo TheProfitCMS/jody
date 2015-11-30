@@ -1,5 +1,34 @@
+```
+//= require JODY/base
+//= require ./jody_notificator_init
+```
+
+jody_notificator_init.js.coffee
+
+```coffee
+@JodyNotificator.clean = ->
+  Notifications.clean()
+
+@JodyNotificator.error = (error) ->
+  Notifications.show_error(error)
+
+@JodyNotificator.errors = (errors) ->
+  Notifications.show_errors(errors)
+
+@JodyNotificator.flashs = (flashs) ->
+  Notifications.show_flash(flashs)
+
+@JodyNotificator.flash = (method, _msg) ->
+  flashs = {}
+  flashs[ method ] = _msg
+  Notifications.show_flash(flashs)
+```
+
 ```ruby
 json.set! :html_content, {
+  set_html: {
+    "#some_block" => "Hello World!",
+  },
   append: {
     "@test_append_1" => "Test append/1",
     "@test_append_2" => "Test append/2",

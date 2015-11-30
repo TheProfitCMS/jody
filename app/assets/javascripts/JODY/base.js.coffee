@@ -3,7 +3,7 @@
 #################################
 #
 unless @log
-  @log = -> try console.log.apply(console, arguments)
+  @log = -> try console.log arguments...
 
 #################################
 # JSON HELPERS
@@ -26,32 +26,29 @@ unless @log
     _default
 
 #################################
-# JodyNotification
+# JodyNotificator
 #################################
 
-# JodyNotification.clean()
-# JodyNotification.show_error("Message")
-# JodyNotification.show_errors({ errors: { field_name_1: ["hello"], field_name_2: ["world"] } })
-# JodyNotification.show_flash({ flash: { alert: "Hello World!" })
+# JodyNotificator.clean()
+# JodyNotificator.show_error("Message")
+# JodyNotificator.show_errors({ errors: { field_name_1: ["hello"], field_name_2: ["world"] } })
+# JodyNotificator.show_flash({ flash: { alert: "Hello World!" })
 
 @JodyNotificator = do ->
-  clean: -> log 'not implemented'
-  error:  (error)        -> log error
-  errors: (errors)       -> log errors
-  flash:  (method, _msg) -> log method, msg
-
-@JodyNotification = do ->
-  clean: -> JodyNotificator.clean()
-
-  show_error:  (error)  -> JodyNotificator.error(error)
-  show_errors: (errors) -> JodyNotificator.errors(errors)
-  show_flash:  (flash)  -> JodyNotificator.flash(flash)
-
   processor: (data) ->
-    JodyNotification.clean()
-    JodyNotification.show_errors data.errors
-    JodyNotification.show_error  data.error
-    JodyNotification.show_flash  data.flash
+    JodyNotificator.clean() unless data.keep_alerts
+    JodyNotificator.errors data.errors
+    JodyNotificator.error  data.error
+    JodyNotificator.flashs data.flash
+
+  clear: -> @clean()
+  clean: -> log 'JodyNotificator.clean() not implemented'
+
+  errors: (errors)       -> log errors
+  error:  (error)        -> log error
+
+  flashs: (flashs)       -> log flashs
+  flash:  (method, _msg) -> log method, msg
 
 #################################
 # JodyJS
@@ -110,7 +107,7 @@ unless @log
 @JodyModal = do ->
   processor: (data) ->
     if data?.modal?.hide is true
-      log "not implemented"
+      log "JodyModal not implemented"
 
 #################################
 # JODY Forms
@@ -249,18 +246,17 @@ unless @log
 #
 @JODY = do ->
   processor: (data, status, response) ->
-    JodyNotification.processor(data)
     JodyRedirect.processor(data)
-    JodyModal.processor(data)
     JodyHtml.processor(data)
     JodyJS.processor(data)
 
-  error_processor: (xhr, response, status) ->
-    JodyNotification.clean()
+    JodyNotificator.processor(data)
+    JodyModal.processor(data)
 
+  error_processor: (xhr, response, status) ->
     if typeof (data = json2data(response.responseText, _default = NaN)) is "object"
-      JodyNotification.processor(data)
+      JodyNotificator.processor(data)
       JodyInlineErrors.processor(data)
     else
       if (response.status isnt 0) and (response.status isnt 200)
-        JodyNotification.show_error("#{ response.statusText }: #{ response.status }")
+        JodyNotificator.show_error("#{ response.statusText }: #{ response.status }")
