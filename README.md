@@ -24,6 +24,13 @@ jody_notificator_init.js.coffee
   Notifications.show_flash(flashs)
 ```
 
+```
+doc = $ document
+
+doc.on 'ajax:success', '#form', (xhr, data, status) ->
+  JODY.processor(data)
+```
+
 ```ruby
 json.set! :html_content, {
   set_html: {
