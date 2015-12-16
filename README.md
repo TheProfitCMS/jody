@@ -31,6 +31,25 @@ doc.on 'ajax:success', '#form', (xhr, data, status) ->
   JODY.processor(data)
 ```
 
+```
+json.set! :keep_alerts, true
+
+json.set! :flash, {
+  notice: "Публикация назначена в раздел"
+}
+```
+
+```
+json.set! :keep_alerts, true
+
+json.set! :flash, {
+  warning: "При загрузке возникли ошибки"
+}
+
+json.errors @attached_image.errors
+```
+
+
 ```ruby
 json.set! :html_content, {
   set_html: {
